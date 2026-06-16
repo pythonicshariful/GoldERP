@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>GoldERP User Manual</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background: #fff;
+        }
+        .page-header {
+            text-align: center;
+            border-bottom: 2px solid #b8860b;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h1 { color: #b8860b; margin-bottom: 5px; font-size: 24px; }
+        h2 { color: #0a192f; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 30px; font-size: 18px; }
+        p { margin: 10px 0; font-size: 14px; }
+        ul { margin: 10px 0; padding-left: 20px; font-size: 14px; }
+        li { margin-bottom: 5px; }
+        .section {
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+        }
+    </style>
+    <!-- html2pdf.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div id="pdf-content">
+        <div class="page-header">
+            <h1>GoldERP ব্যবহার নির্দেশিকা</h1>
+            <p style="color: #666;">এ টু জেড ইউজার ম্যানুয়াল (A to Z User Manual)</p>
+        </div>
+
+        <div class="section">
+            <h2>১. ড্যাশবোর্ড (Dashboard)</h2>
+            <ul>
+                <li>সিস্টেমে লগইন করার পর প্রথমেই ড্যাশবোর্ড দেখা যাবে।</li>
+                <li>এখানে আজকের <strong>ক্যাশ ব্যালেন্স (Cash Balance)</strong>, <strong>ব্যাংক ব্যালেন্স (Bank Balance)</strong>, <strong>আজকের বিক্রি (Today's Sales)</strong>, <strong>মোট বকেয়া (AR Outstanding)</strong> এবং <strong>মোট স্টকের মূল্য</strong> এক নজরে দেখা যাবে।</li>
+                <li>ড্যাশবোর্ডের নিচের দিকে <strong>Stock System (Real-time)</strong> টেবিল আছে, যেখানে কোন প্রোডাক্ট কত পিস বা গ্রাম স্টকে আছে তা সরাসরি দেখা যাবে।</li>
+                <li>উপরে থাকা <strong>Quick Actions</strong> বাটনগুলো থেকে খুব সহজেই নতুন বিক্রি, নতুন খরচ বা নতুন মর্টগেজ এন্ট্রি পেজে যাওয়া যায়।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>২. শোরুম সেটআপ (Showroom Setup)</h2>
+            <ul>
+                <li>সাইড মেনু থেকে <strong>Showroom Setup</strong> এ যান।</li>
+                <li>এখানে আপনার শোরুমের নাম, ঠিকানা, ফোন নম্বর, ট্রেড লাইসেন্স নম্বর, এবং ভাড়ার তথ্য (Monthly Rent, Advance Rent) এন্ট্রি করতে পারবেন।</li>
+                <li><strong>বিঃদ্রঃ</strong> শুধুমাত্র Owner বা মালিক এই তথ্য পরিবর্তন করতে পারবেন।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>৩. স্বর্ণের ইনভেন্টরি ও ক্রয় (Gold Inventory & Purchases)</h2>
+            <p><strong>ধাপ ১: আইটেম তৈরি করা (Item Master)</strong></p>
+            <ul>
+                <li>যেকোনো স্বর্ণ কেনার আগে সেটির নাম সিস্টেমে যোগ করতে হবে।</li>
+                <li><strong>Inventory > Item Master</strong> এ গিয়ে <strong>Add Item</strong> এ ক্লিক করুন।</li>
+                <li>আইটেমের কোড (যেমন: RNG-01), নাম (যেমন: Ring 21K), ক্যাটাগরি এবং একক (Gram/Tola) দিয়ে সেভ করুন।</li>
+            </ul>
+            <p><strong>ধাপ ২: স্বর্ণ ক্রয় (Purchase Entry)</strong></p>
+            <ul>
+                <li><strong>Inventory > Purchases</strong> এ গিয়ে <strong>New Purchase</strong> এ ক্লিক করুন।</li>
+                <li>তারিখ, সাপ্লায়ারের নাম, আইটেম নির্বাচন করুন এবং পরিমাণ (Quantity) ও রেট দিন।</li>
+                <li><strong>স্টক সিস্টেম:</strong> সেভ করলে স্বয়ংক্রিয়ভাবে স্টকে ওই আইটেমের পরিমাণ বেড়ে যাবে।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>৪. বিক্রয় এবং বকেয়া আদায় (Sales & Accounts Receivable)</h2>
+            <p><strong>নতুন বিক্রয় (New Sale):</strong></p>
+            <ul>
+                <li><strong>Sales > New Sale</strong> এ যান।</li>
+                <li>গ্রাহকের নাম, মোবাইল নম্বর এবং যে আইটেম বিক্রি করছেন সেটি নির্বাচন করুন।</li>
+                <li>পরিমাণ, রেট এবং মজুরি (Making Charge) বসালে <strong>Total Amount</strong> নিজে থেকেই হিসাব হয়ে যাবে।</li>
+                <li>গ্রাহক যে পরিমাণ টাকা দিচ্ছেন তা <strong>Amount Paid</strong> এ লিখুন। বাকি টাকা বকেয়া (Due) হিসেবে সেভ হবে।</li>
+            </ul>
+            <p><strong>বকেয়া আদায় (Receive Due Payment):</strong></p>
+            <ul>
+                <li><strong>Sales > Accounts Receivable</strong> এ গেলে কাদের কাছে কত টাকা পাওনা আছে তার লিস্ট দেখা যাবে।</li>
+                <li>টাকা গ্রহণ করার জন্য <strong>Pay</strong> বাটনে ক্লিক করে প্রাপ্ত টাকার পরিমাণ বসিয়ে সেভ করুন।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>৫. স্বর্ণ বন্ধক (Gold Mortgage)</h2>
+            <ul>
+                <li><strong>Mortgage > Mortgage Register</strong> থেকে <strong>New Mortgage</strong> এ ক্লিক করুন।</li>
+                <li>গ্রাহকের নাম, বন্ধকি স্বর্ণের বিবরণ, ওজন এবং ঋণের পরিমাণ (Loan Amount) এন্ট্রি করুন।</li>
+                <li>মাসিক সুদের হার (Interest Rate) দিলে প্রতি মাসের সুদ স্বয়ংক্রিয়ভাবে হিসাব হয়ে যাবে।</li>
+                <li><strong>সুদ আদায়:</strong> গ্রাহক যখন সুদ দিতে আসবে, তখন রেজিস্টার থেকে <strong>Record Interest</strong> বাটনে ক্লিক করে সুদের টাকা এন্ট্রি করুন।</li>
+                <li><strong>বন্ধক ছাড়ানো (Redeem):</strong> ঋণ পরিশোধ করে স্বর্ণ ছাড়িয়ে নেওয়ার সময় <strong>Redeem (Tick Mark)</strong> বাটনে ক্লিক করে বন্ধক ক্লোজ করুন।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>৬. খরচ ব্যবস্থাপনা (Expense Management)</h2>
+            <ul>
+                <li>দোকানের দৈনন্দিন খরচ (যেমন: চা-নাস্তা, বিদ্যুৎ বিল, ভাড়া) এন্ট্রি করতে <strong>Expenses > Add Expense</strong> এ যান।</li>
+                <li>খরচের ধরন, বিবরণ এবং টাকার পরিমাণ দিয়ে সেভ করুন।</li>
+                <li>ক্যাশে খরচ করলে সেটি স্বয়ংক্রিয়ভাবে ক্যাশবহি থেকে মাইনাস হয়ে যাবে।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>৭. কর্মচারী ও বেতন (Staff Management & Salary)</h2>
+            <ul>
+                <li><strong>নতুন কর্মচারী যোগ:</strong> Staff > Add Staff থেকে কর্মচারীর নাম ও বেসিক বেতন সেট করুন।</li>
+                <li><strong>বেতন বা অগ্রিম প্রদান:</strong> Staff > Salary Entry থেকে যেকোনো কর্মচারীকে অগ্রিম বা বেতন প্রদান করতে পারবেন।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>৮. ক্যাশবহি (Daily Cashbook)</h2>
+            <ul>
+                <li><strong>Cashbook > Daily Cashbook</strong> হলো আপনার প্রতিদিনের ক্যাশ বাক্সের হিসাব।</li>
+                <li>এখানে কোনো কিছু ম্যানুয়ালি লিখতে হয় না। আপনি যখন বিক্রি করেন, টাকা পান, খরচ করেন বা মর্টগেজ দেন—সব হিসাব স্বয়ংক্রিয়ভাবে এখানে এসে ওপেনিং এবং ক্লোজিং ব্যালেন্স মিলিয়ে দেয়।</li>
+                <li>তবুও যদি অন্য কোনো কারণে ক্যাশ আসে বা যায়, তবে <strong>Manual Entry</strong> দিয়ে তা যোগ বা বিয়োগ করা যাবে।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>৯. আর্থিক প্রতিবেদন (Financial Reports)</h2>
+            <ul>
+                <li><strong>P&L Statement (লাভ-ক্ষতি):</strong> নিট লাভ বা ক্ষতি (Net Profit/Loss) দেখা যাবে।</li>
+                <li><strong>Balance Sheet (উদ্বৃত্তপত্র):</strong> আপনার শোরুমের মোট সম্পদ এবং দায়ের একটি সম্পূর্ণ চিত্র।</li>
+                <li><strong>Cash Flow (নগদ প্রবাহ):</strong> হাতে কত নগদ টাকা আসলো এবং কত টাকা গেলো তার হিসাব।</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>১০. ইউজার ম্যানেজমেন্ট (User Roles & Access)</h2>
+            <ul>
+                <li><strong>Owner (মালিক):</strong> সব ধরনের কাজ করতে পারবেন। রিপোর্ট দেখা, ডাটা মোছা বা অন্য ইউজার তৈরি করা।</li>
+                <li><strong>Manager (ম্যানেজার):</strong> বিক্রি, ক্রয়, খরচ এন্ট্রি এবং রিপোর্ট দেখতে পারবেন। মুছতে বা নতুন ইউজার তৈরি করতে পারবেন না।</li>
+                <li><strong>Staff (স্টাফ):</strong> শুধুমাত্র বিক্রি (Sales) এন্ট্রি করতে পারবেন।</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            var element = document.getElementById('pdf-content');
+            var opt = {
+                margin:       0.5,
+                filename:     'GoldERP_User_Manual_A4.pdf',
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 4, useCORS: true, logging: false },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            
+            // Auto trigger download
+            html2pdf().set(opt).from(element).save().then(function() {
+                // Optionally close window after download starts
+                setTimeout(() => window.close(), 1000);
+            });
+        };
+    </script>
+</body>
+</html>

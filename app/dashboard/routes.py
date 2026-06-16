@@ -80,3 +80,8 @@ def index():
 @login_required
 def manual():
     return render_template('manual.html')
+
+@dashboard_bp.route('/manual/download')
+@login_required
+def manual_download():
+    return render_template('manual_print.html')
