@@ -2,10 +2,13 @@
 {% block title %}ব্যবহার নির্দেশিকা (User Manual){% endblock %}
 
 {% block content %}
-<div class="page-header">
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap">
   <div>
     <h2><i class="bi bi-book-half me-2"></i>GoldERP ব্যবহার নির্দেশিকা</h2>
-    <p class="text-muted" style="color: rgba(255,255,255,0.7) !important;">এ টু জেড ইউজার ম্যানুয়াল (A to Z User Manual)</p>
+    <p class="text-muted" style="color: rgba(255,255,255,0.7) !important; margin-bottom: 0;">এ টু জেড ইউজার ম্যানুয়াল (A to Z User Manual)</p>
+  </div>
+  <div class="mt-2 mt-md-0">
+    <button id="downloadPdfBtn" class="btn btn-gold shadow-sm"><i class="bi bi-file-earmark-pdf me-1"></i> Download PDF</button>
   </div>
 </div>
 
@@ -229,4 +232,52 @@
     
   </div>
 </div>
+
+<!-- HTML2PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+  document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+    const btn = this;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...';
+    btn.disabled = true;
+
+    // 1. Expand all accordions so the PDF has all text visible
+    const accordions = document.querySelectorAll('.accordion-collapse');
+    accordions.forEach(acc => {
+        acc.classList.add('show');
+        acc.style.display = 'block'; // Force display for html2canvas
+    });
+    
+    // Hide the toggle icons for a cleaner PDF
+    const buttons = document.querySelectorAll('.accordion-button');
+    buttons.forEach(b => b.classList.remove('collapsed'));
+
+    // 2. Wait a moment for CSS transitions, then generate PDF
+    setTimeout(() => {
+      // We capture the col-lg-10 element which contains the manual body
+      const element = document.querySelector('.col-lg-10'); 
+      const opt = {
+        margin:       [0.5, 0.5, 0.5, 0.5],
+        filename:     'GoldERP_User_Manual.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 1024 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      
+      html2pdf().set(opt).from(element).save().then(() => {
+        // Restore button state
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        
+        // Collapse accordions back
+        accordions.forEach(acc => {
+            acc.classList.remove('show');
+            acc.style.display = ''; 
+        });
+        buttons.forEach(b => b.classList.add('collapsed'));
+      });
+    }, 800);
+  });
+</script>
 {% endblock %}
