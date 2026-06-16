@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Salary Entry{% endblock %}
+{% block content %}
+<div class="page-header"><div><h2><i class="bi bi-currency-dollar me-2"></i>Salary Transaction</h2></div></div>
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card-gold">
+      <div class="card-header"><h5>New Transaction</h5></div>
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6"><label>Staff Member *</label><select name="staff_id" class="form-select" required><option value="">Select staff...</option>{% for member in staff %}<option value="{{ member.id }}">{{ member.staff_name }} ({{ member.designation or 'N/A' }})</option>{% endfor %}</select></div>
+            <div class="col-md-6"><label>Transaction Type *</label><select name="transaction_type" class="form-select" required><option value="advance">Salary Advance</option><option value="payment">Salary Payment</option><option value="adjustment">Adjustment</option><option value="service_charge">Making/Service Charge</option></select></div>
+            <div class="col-md-6"><label>Date *</label><input type="date" name="transaction_date" class="form-control" required value="{{ today.isoformat() }}"></div>
+            <div class="col-md-6"><label>Amount (৳) *</label><input type="number" step="0.01" name="amount" class="form-control" required placeholder="0.00"></div>
+            <div class="col-12"><label>Remarks</label><input type="text" name="remarks" class="form-control" placeholder="Optional notes..."></div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-save"></i> Save Transaction</button>
+            <a href="{{ url_for('staff.list_staff') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

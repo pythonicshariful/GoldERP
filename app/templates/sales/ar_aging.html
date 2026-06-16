@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}AR Aging Report{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-clock-history me-2"></i>AR Aging Report</h2></div>
+</div>
+
+{% macro aging_table(sales, label, bucket_class) %}
+<div class="card-gold mb-3 {{ bucket_class }}">
+  <div class="card-header">
+    <h5>{{ label }}</h5>
+    <span class="badge badge-gold">৳{{ '{:,.2f}'.format(sales | sum(attribute='balance_due') | float) }}</span>
+  </div>
+  {% if sales %}
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>Invoice</th><th>Customer</th><th>Sale Date</th><th class="text-end">Balance (৳)</th></tr></thead>
+        <tbody>
+          {% for s in sales %}
+          <tr>
+            <td><a href="{{ url_for('sales.invoice', id=s.id) }}" class="text-gold">{{ s.invoice_no }}</a></td>
+            <td>{{ s.customer_name }}</td>
+            <td>{{ s.sale_date.strftime('%d %b %Y') }}</td>
+            <td class="text-end fw-700 amount-negative">৳{{ '{:,.2f}'.format(s.balance_due) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="card-body text-muted text-center py-3">No invoices in this bucket.</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{{ aging_table(buckets['0_30'], '🟢 0–30 Days (Current)', 'aging-0-30') }}
+{{ aging_table(buckets['31_60'], '🟡 31–60 Days', 'aging-31-60') }}
+{{ aging_table(buckets['61_90'], '🟠 61–90 Days', 'aging-61-90') }}
+{{ aging_table(buckets['90_plus'], '🔴 90+ Days (Overdue)', 'aging-90plus') }}
+
+<!-- Summary -->
+<div class="card-gold">
+  <div class="card-header"><h5>Aging Summary</h5></div>
+  <div class="card-body p-0">
+    <table class="table-gold w-100">
+      <thead><tr><th>Bucket</th><th class="text-end">Amount (৳)</th></tr></thead>
+      <tbody>
+        <tr><td>0–30 Days</td><td class="text-end amount-positive">৳{{ '{:,.2f}'.format(totals['0_30']) }}</td></tr>
+        <tr><td>31–60 Days</td><td class="text-end" style="color:var(--amber);">৳{{ '{:,.2f}'.format(totals['31_60']) }}</td></tr>
+        <tr><td>61–90 Days</td><td class="text-end" style="color:#fd7e14;">৳{{ '{:,.2f}'.format(totals['61_90']) }}</td></tr>
+        <tr><td>90+ Days (Overdue)</td><td class="text-end amount-negative">৳{{ '{:,.2f}'.format(totals['90_plus']) }}</td></tr>
+      </tbody>
+      <tfoot><tr><td><strong>GRAND TOTAL</strong></td><td class="text-end"><strong>৳{{ '{:,.2f}'.format(totals.values()|sum) }}</strong></td></tr></tfoot>
+    </table>
+  </div>
+</div>
+{% endblock %}

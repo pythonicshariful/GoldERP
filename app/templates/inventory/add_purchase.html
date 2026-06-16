@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Add Purchase{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-plus-circle me-2"></i>New Gold Purchase</h2></div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-gold">
+      <div class="card-header"><h5><i class="bi bi-gem me-2"></i>Purchase Entry</h5></div>
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-4"><label>Date *</label><input type="date" name="purchase_date" class="form-control" required value="{{ today.isoformat() }}"></div>
+            <div class="col-md-4"><label>Purchase Type</label><select name="purchase_type" class="form-select"><option value="finished">Finished Gold</option><option value="raw">Raw Gold</option></select></div>
+            <div class="col-md-4"><label>Item *</label><select name="item_id" class="form-select" required><option value="">Select item...</option>{% for item in items %}<option value="{{ item.id }}">{{ item.item_name }} ({{ item.item_code }})</option>{% endfor %}</select></div>
+            <div class="col-md-6"><label>Supplier Name *</label><input type="text" name="supplier_name" class="form-control" required placeholder="Supplier / Vendor name"></div>
+            <div class="col-md-6"><label>Payment Mode</label><select name="payment_mode" class="form-select"><option value="cash">Cash</option><option value="bank">Bank Transfer</option><option value="credit">Credit</option></select></div>
+            <div class="col-md-4"><label>Quantity *</label><input type="number" step="0.001" name="quantity" id="quantity" class="form-control" required placeholder="0.000" min="0.001"></div>
+            <div class="col-md-4"><label>Rate per Unit (৳) *</label><input type="number" step="0.01" name="rate_per_unit" id="rate_per_unit" class="form-control" required placeholder="0.00"></div>
+            <div class="col-md-4"><label>Total Amount (৳)</label><input type="number" step="0.01" name="total_amount" id="total_amount" class="form-control" readonly style="background:#fff8dc;font-weight:700;color:var(--navy);"></div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-save"></i> Record Purchase</button>
+            <a href="{{ url_for('inventory.list_purchases') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

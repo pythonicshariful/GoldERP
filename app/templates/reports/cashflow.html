@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Cash Flow Statement{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-arrow-left-right me-2"></i>Cash Flow Statement</h2><small style="color:rgba(255,255,255,0.7);">Indirect Method</small></div>
+  <button onclick="window.print()" class="btn-navy"><i class="bi bi-printer"></i> Print</button>
+</div>
+
+<div class="card-gold mb-3">
+  <div class="card-body">
+    <form method="GET" class="form-gold row g-2 align-items-end">
+      <div class="col-md-4"><label>From</label><input type="date" name="start_date" class="form-control" value="{{ start_date }}"></div>
+      <div class="col-md-4"><label>To</label><input type="date" name="end_date" class="form-control" value="{{ end_date }}"></div>
+      <div class="col-md-4"><button type="submit" class="btn-gold w-100"><i class="bi bi-funnel"></i> Generate</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card-gold">
+      <div class="card-header text-center">
+        <h5>Cash Flow Statement</h5>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);">{{ start_date }} to {{ end_date }}</div>
+      </div>
+      <div class="card-body">
+        <table style="width:100%;">
+          <tr style="background:var(--gold-pale);border-radius:8px;"><td colspan="2" style="padding:0.6rem 0.75rem;font-weight:700;color:var(--navy);">💼 Operating Activities</td></tr>
+          <tr><td style="padding:0.5rem 1rem;">Cash Receipts (Sales, Interest, AR)</td><td style="text-align:right;padding:0.5rem;" class="amount-positive">৳{{ '{:,.2f}'.format(receipts) }}</td></tr>
+          <tr><td style="padding:0.5rem 1rem;">Cash Payments (Purchases, Expenses, Salary, Loans)</td><td style="text-align:right;padding:0.5rem;" class="amount-negative">৳{{ '{:,.2f}'.format(payments) }}</td></tr>
+          <tr style="border-top:2px solid var(--gold);border-bottom:2px solid var(--gold);">
+            <td style="padding:0.75rem 1rem;font-weight:800;">Net Cash from Operations</td>
+            <td style="text-align:right;padding:0.75rem;font-weight:800;font-size:1.2rem;color:{{ 'var(--green)' if net_cash >= 0 else 'var(--red)' }};">৳{{ '{:,.2f}'.format(net_cash) }}</td>
+          </tr>
+        </table>
+        <div class="mt-3 p-3" style="background:var(--gold-pale);border-radius:var(--radius);border:1px solid rgba(184,134,11,0.3);">
+          <i class="bi bi-info-circle text-gold me-2"></i>
+          <small>Cash flow is based on actual cashbook entries (cash mode only). Credit transactions are excluded until payment is received.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

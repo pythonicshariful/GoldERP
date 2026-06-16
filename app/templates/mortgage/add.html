@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}New Mortgage{% endblock %}
+{% block content %}
+<div class="page-header"><div><h2><i class="bi bi-plus-circle me-2"></i>New Gold Mortgage</h2></div></div>
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="card-gold">
+      <div class="card-header"><h5><i class="bi bi-bank2 me-2"></i>Mortgage Entry</h5></div>
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-4"><label>Date *</label><input type="date" name="mortgage_date" class="form-control" required value="{{ today.isoformat() }}"></div>
+            <div class="col-md-4"><label>Customer Name *</label><input type="text" name="customer_name" class="form-control" required placeholder="Full name"></div>
+            <div class="col-md-4"><label>Phone</label><input type="text" name="customer_phone" class="form-control" placeholder="+880..."></div>
+            <div class="col-12"><label>Gold Description</label><textarea name="gold_description" class="form-control" rows="2" placeholder="e.g. 2 gold bangles, 1 necklace set..."></textarea></div>
+            <div class="col-md-4"><label>Gold Weight (grams) *</label><input type="number" step="0.001" name="gold_weight_gram" class="form-control" required placeholder="0.000"></div>
+            <div class="col-md-4"><label>Estimated Value (৳) *</label><input type="number" step="0.01" name="gold_value_estimated" class="form-control" required placeholder="0.00"></div>
+            <div class="col-md-4"><label>Loan Amount (৳) *</label><input type="number" step="0.01" name="loan_amount" id="loan_amount" class="form-control" required placeholder="0.00"></div>
+            <div class="col-md-4"><label>Monthly Interest Rate (%)</label><input type="number" step="0.01" name="interest_rate" id="interest_rate" class="form-control" required value="2.00" placeholder="e.g. 2.00"></div>
+            <div class="col-md-8">
+              <label>Monthly Interest (Auto-calc)</label>
+              <div style="background:var(--gold-pale);border:2px solid var(--gold);border-radius:12px;padding:0.75rem 1rem;font-size:1.3rem;font-weight:800;color:var(--navy);" id="monthly_interest_display">৳ 0.00</div>
+            </div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-save"></i> Register Mortgage</button>
+            <a href="{{ url_for('mortgage.register') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Mortgage Register{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-bank2 me-2"></i>Gold Mortgage Register</h2></div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('mortgage.add_mortgage') }}" class="btn-gold"><i class="bi bi-plus-circle"></i> New Mortgage</a>
+    <a href="{{ url_for('mortgage.interest_report') }}" class="btn-outline-gold"><i class="bi bi-percent"></i> Interest Report</a>
+  </div>
+</div>
+
+<!-- Status filter -->
+<div class="card-gold mb-3">
+  <div class="card-body">
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('mortgage.register') }}" class="btn-{{ 'gold' if not status_filter else 'outline-gold' }}" style="min-height:auto;padding:0.4rem 1rem;font-size:0.875rem;">All</a>
+      <a href="?status=active" class="btn-{{ 'gold' if status_filter=='active' else 'outline-gold' }}" style="min-height:auto;padding:0.4rem 1rem;font-size:0.875rem;">Active</a>
+      <a href="?status=redeemed" class="btn-{{ 'gold' if status_filter=='redeemed' else 'outline-gold' }}" style="min-height:auto;padding:0.4rem 1rem;font-size:0.875rem;">Redeemed</a>
+      <a href="?status=defaulted" class="btn-{{ 'gold' if status_filter=='defaulted' else 'outline-gold' }}" style="min-height:auto;padding:0.4rem 1rem;font-size:0.875rem;">Defaulted</a>
+    </div>
+  </div>
+</div>
+
+<div class="card-gold">
+  <div class="card-header"><h5>Mortgage List</h5><span class="badge badge-gold">{{ mortgages|length }} records</span></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th class="text-end">Gold (g)</th><th class="text-end">Loan (৳)</th><th>Rate%</th><th class="text-end">Monthly Int.</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for m in mortgages %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ m.mortgage_date.strftime('%d %b %Y') }}</td>
+            <td><strong>{{ m.customer_name }}</strong></td>
+            <td>{{ m.customer_phone or '—' }}</td>
+            <td class="text-end">{{ '{:,.3f}'.format(m.gold_weight_gram) }}</td>
+            <td class="text-end fw-700">৳{{ '{:,.2f}'.format(m.loan_amount) }}</td>
+            <td>{{ m.interest_rate }}%</td>
+            <td class="text-end amount-positive">৳{{ '{:,.2f}'.format(m.monthly_interest) }}</td>
+            <td><span class="status-{{ m.status }}">{{ m.status | title }}</span></td>
+            <td>
+              {% if m.status == 'active' %}
+              <a href="{{ url_for('mortgage.record_interest', id=m.id) }}" class="btn btn-sm btn-outline-success" title="Record Interest"><i class="bi bi-percent"></i></a>
+              <form method="POST" action="{{ url_for('mortgage.redeem', id=m.id) }}" class="d-inline" onsubmit="return confirm('Mark as redeemed?')">
+                <input type="hidden" name="redemption_date" value="{{ import('datetime').date.today().isoformat() if false else '' }}">
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="redeemMortgage({{ m.id }})"><i class="bi bi-check-circle"></i></button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="10" class="text-center py-4 text-muted">No mortgages found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Redeem Modal -->
+<div class="modal fade" id="redeemModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="border-radius:var(--radius);border:1px solid rgba(184,134,11,0.3);">
+      <div class="modal-header" style="background:var(--navy);color:white;border-radius:var(--radius) var(--radius) 0 0;">
+        <h5 class="modal-title" style="color:white;">Confirm Redemption</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" id="redeemForm">
+        <div class="modal-body form-gold">
+          <label>Redemption Date</label>
+          <input type="date" name="redemption_date" class="form-control" id="redeemDate">
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn-gold"><i class="bi bi-check-circle"></i> Confirm Redemption</button>
+          <button type="button" class="btn-outline-gold" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const today = new Date().toISOString().split('T')[0];
+function redeemMortgage(id) {
+  document.getElementById('redeemForm').action = '/mortgage/redeem/' + id;
+  document.getElementById('redeemDate').value = today;
+  new bootstrap.Modal(document.getElementById('redeemModal')).show();
+}
+</script>
+{% endblock %}

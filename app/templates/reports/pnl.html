@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}P&L Statement{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-bar-chart-line me-2"></i>Statement of Profit & Loss</h2><small style="color:rgba(255,255,255,0.7);">IFRS 18 Aligned</small></div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('reports.export_excel') }}?type=pnl&start_date={{ start_date }}&end_date={{ end_date }}" class="btn-outline-gold"><i class="bi bi-file-earmark-excel"></i> Excel</a>
+    <button onclick="window.print()" class="btn-navy"><i class="bi bi-printer"></i> Print</button>
+  </div>
+</div>
+
+<!-- Date Filter -->
+<div class="card-gold mb-3">
+  <div class="card-body">
+    <form method="GET" class="form-gold row g-2 align-items-end">
+      <div class="col-md-4"><label>From</label><input type="date" name="start_date" class="form-control" value="{{ start_date }}"></div>
+      <div class="col-md-4"><label>To</label><input type="date" name="end_date" class="form-control" value="{{ end_date }}"></div>
+      <div class="col-md-4"><button type="submit" class="btn-gold w-100"><i class="bi bi-funnel"></i> Generate</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card-gold">
+      <div class="card-header text-center">
+        <h5 style="margin:0;">Statement of Profit & Loss</h5>
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);">Period: {{ start_date }} to {{ end_date }}</div>
+      </div>
+      <div class="card-body">
+        <table style="width:100%;border-collapse:collapse;">
+          <!-- Revenue -->
+          <tr><td colspan="2" style="background:var(--gold-pale);padding:0.6rem 0.75rem;font-weight:700;color:var(--navy);border-radius:8px;">📈 REVENUE</td></tr>
+          <tr><td style="padding:0.5rem 1rem;">Sales Revenue</td><td style="text-align:right;padding:0.5rem;">৳{{ '{:,.2f}'.format(sales_revenue) }}</td></tr>
+          <tr><td style="padding:0.5rem 1rem;">Making Charges</td><td style="text-align:right;padding:0.5rem;">৳{{ '{:,.2f}'.format(making_charges) }}</td></tr>
+          <tr><td style="padding:0.5rem 1rem;">Interest Income (Mortgage)</td><td style="text-align:right;padding:0.5rem;">৳{{ '{:,.2f}'.format(interest_income) }}</td></tr>
+          <tr style="border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);">
+            <td style="padding:0.6rem 1rem;font-weight:700;">Total Revenue</td>
+            <td style="text-align:right;padding:0.6rem;font-weight:700;color:var(--green);">৳{{ '{:,.2f}'.format(total_revenue) }}</td>
+          </tr>
+
+          <tr><td colspan="2" style="height:10px;"></td></tr>
+
+          <!-- COGS -->
+          <tr><td colspan="2" style="background:rgba(220,53,69,0.08);padding:0.6rem 0.75rem;font-weight:700;color:var(--red);border-radius:8px;">📦 COST OF GOODS SOLD</td></tr>
+          <tr><td style="padding:0.5rem 1rem;">Gold Purchases (Cash/Bank)</td><td style="text-align:right;padding:0.5rem;color:var(--red);">৳{{ '{:,.2f}'.format(cogs) }}</td></tr>
+          <tr style="border-top:1px solid #ddd;border-bottom:1px solid #ddd;">
+            <td style="padding:0.6rem 1rem;font-weight:700;">Total COGS</td>
+            <td style="text-align:right;padding:0.6rem;font-weight:700;color:var(--red);">৳{{ '{:,.2f}'.format(cogs) }}</td>
+          </tr>
+
+          <!-- Gross Profit -->
+          <tr style="background:linear-gradient(135deg,var(--gold-pale),#fffdf0);">
+            <td style="padding:0.75rem 1rem;font-weight:700;color:var(--navy);font-size:1rem;">GROSS PROFIT</td>
+            <td style="text-align:right;padding:0.75rem;font-weight:800;font-size:1rem;color:{{ 'var(--green)' if gross_profit >= 0 else 'var(--red)' }};">৳{{ '{:,.2f}'.format(gross_profit) }}</td>
+          </tr>
+
+          <tr><td colspan="2" style="height:10px;"></td></tr>
+
+          <!-- Expenses -->
+          <tr><td colspan="2" style="background:rgba(220,53,69,0.08);padding:0.6rem 0.75rem;font-weight:700;color:var(--red);border-radius:8px;">💸 OPERATING EXPENSES</td></tr>
+          {% for exp_type, amount in expense_rows %}
+          <tr><td style="padding:0.5rem 1rem;">{{ exp_type | title }}</td><td style="text-align:right;padding:0.5rem;color:var(--red);">৳{{ '{:,.2f}'.format(amount) }}</td></tr>
+          {% endfor %}
+          <tr style="border-top:1px solid #ddd;border-bottom:1px solid #ddd;">
+            <td style="padding:0.6rem 1rem;font-weight:700;">Total Expenses</td>
+            <td style="text-align:right;padding:0.6rem;font-weight:700;color:var(--red);">৳{{ '{:,.2f}'.format(total_expenses) }}</td>
+          </tr>
+
+          <!-- Net Profit -->
+          <tr style="background:linear-gradient(135deg,{{ 'rgba(25,135,84,0.12)' if net_profit >= 0 else 'rgba(220,53,69,0.12)' }},white);border-top:3px solid {{ 'var(--green)' if net_profit >= 0 else 'var(--red)' }};">
+            <td style="padding:1rem;font-weight:800;font-size:1.1rem;color:var(--navy);">NET PROFIT / (LOSS)</td>
+            <td style="text-align:right;padding:1rem;font-weight:800;font-size:1.3rem;color:{{ 'var(--green)' if net_profit >= 0 else 'var(--red)' }};">৳{{ '{:,.2f}'.format(net_profit) }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

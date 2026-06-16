@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}User Management{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-person-gear me-2"></i>User Management</h2></div>
+  <a href="{{ url_for('usermgmt.add_user') }}" class="btn-gold"><i class="bi bi-person-plus"></i> Add User</a>
+</div>
+<div class="card-gold">
+  <div class="card-header"><h5>System Users</h5></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Username</th><th>Full Name</th><th>Role</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong>{{ user.username }}</strong></td>
+            <td>{{ user.full_name or '—' }}</td>
+            <td>
+              {% if user.role == 'owner' %}<span class="badge badge-gold">Owner</span>
+              {% elif user.role == 'manager' %}<span class="badge badge-navy">Manager</span>
+              {% else %}<span class="badge bg-secondary">Staff</span>{% endif %}
+            </td>
+            <td><span class="status-{{ 'active' if user.is_active else 'defaulted' }}">{{ 'Active' if user.is_active else 'Inactive' }}</span></td>
+            <td>{{ user.created_at.strftime('%d %b %Y') }}</td>
+            <td>
+              <a href="{{ url_for('usermgmt.edit_user', id=user.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+              {% if user.id != current_user.id %}
+              <form method="POST" action="{{ url_for('usermgmt.toggle_user', id=user.id) }}" class="d-inline">
+                <button type="submit" class="btn btn-sm {{ 'btn-outline-warning' if user.is_active else 'btn-outline-success' }}"
+                        data-confirm="{{ 'Deactivate' if user.is_active else 'Activate' }} {{ user.username }}?">
+                  <i class="bi bi-{{ 'toggle-off' if user.is_active else 'toggle-on' }}"></i>
+                </button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

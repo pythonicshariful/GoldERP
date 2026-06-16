@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Edit User{% endblock %}
+{% block content %}
+<div class="page-header"><div><h2><i class="bi bi-pencil me-2"></i>Edit User: {{ user.username }}</h2></div></div>
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card-gold">
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6"><label>Username</label><input type="text" class="form-control" value="{{ user.username }}" readonly style="background:#f5f5f5;"></div>
+            <div class="col-md-6"><label>Full Name</label><input type="text" name="full_name" class="form-control" value="{{ user.full_name or '' }}"></div>
+            <div class="col-md-6"><label>Role</label><select name="role" class="form-select"><option value="staff" {% if user.role=='staff' %}selected{% endif %}>Staff</option><option value="manager" {% if user.role=='manager' %}selected{% endif %}>Manager</option><option value="owner" {% if user.role=='owner' %}selected{% endif %}>Owner</option></select></div>
+            <div class="col-md-6"><label>New Password (leave blank to keep)</label><input type="password" name="new_password" class="form-control" placeholder="Optional"></div>
+            <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if user.is_active %}checked{% endif %}><label class="form-check-label" for="is_active">Active</label></div></div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-save"></i> Update</button>
+            <a href="{{ url_for('usermgmt.list_users') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

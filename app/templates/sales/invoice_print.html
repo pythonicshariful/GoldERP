@@ -1,0 +1,20 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:12px;margin:20px;}</style></head>
+<body>
+<div style="text-align:center;border-bottom:3px solid #B8860B;padding-bottom:15px;margin-bottom:15px;">
+  <h2 style="color:#1F3864;margin:0;">{{ showroom.showroom_name if showroom else 'Gold Showroom' }}</h2>
+  <div>{{ showroom.address if showroom else '' }}</div>
+</div>
+<div style="display:flex;justify-content:space-between;margin-bottom:20px;">
+  <div><strong>Bill To:</strong><br>{{ sale.customer_name }}<br>{{ sale.customer_phone }}</div>
+  <div style="text-align:right;"><strong>Invoice:</strong> {{ sale.invoice_no }}<br><strong>Date:</strong> {{ sale.sale_date.strftime('%d %B %Y') }}</div>
+</div>
+<table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+  <thead><tr style="background:#1F3864;color:white;"><th style="padding:8px;text-align:left;">Item</th><th style="padding:8px;text-align:right;">Qty</th><th style="padding:8px;text-align:right;">Rate</th><th style="padding:8px;text-align:right;">Amount</th></tr></thead>
+  <tbody>
+    <tr><td style="padding:8px;border-bottom:1px solid #ddd;">{{ sale.item.item_name }}</td><td style="padding:8px;text-align:right;border-bottom:1px solid #ddd;">{{ sale.quantity }} {{ sale.item.unit }}</td><td style="padding:8px;text-align:right;border-bottom:1px solid #ddd;">৳{{ sale.rate_per_unit }}</td><td style="padding:8px;text-align:right;border-bottom:1px solid #ddd;">৳{{ sale.quantity * sale.rate_per_unit }}</td></tr>
+    {% if sale.making_charge > 0 %}<tr><td>Making Charge</td><td></td><td></td><td style="text-align:right;">৳{{ sale.making_charge }}</td></tr>{% endif %}
+  </tbody>
+</table>
+<div style="text-align:right;"><table style="margin-left:auto;"><tr><td><strong>Total:</strong></td><td style="text-align:right;padding-left:20px;">৳{{ sale.total_amount }}</td></tr><tr><td>Paid:</td><td style="text-align:right;padding-left:20px;">৳{{ sale.paid_amount }}</td></tr><tr style="border-top:2px solid #B8860B;"><td><strong>Balance:</strong></td><td style="text-align:right;padding-left:20px;"><strong>৳{{ sale.balance_due }}</strong></td></tr></table></div>
+<div style="text-align:center;margin-top:30px;color:#666;">Thank you for your business!</div>
+</body></html>

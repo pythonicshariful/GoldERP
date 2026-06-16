@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}New Sale{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-plus-circle me-2"></i>New Gold Sale</h2></div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="card-gold">
+      <div class="card-header"><h5><i class="bi bi-receipt me-2"></i>Sale Entry</h5><span class="badge badge-gold">Invoice auto-generated</span></div>
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-4"><label>Sale Date *</label><input type="date" name="sale_date" class="form-control" required value="{{ today.isoformat() }}"></div>
+            <div class="col-md-4"><label>Customer Name *</label><input type="text" name="customer_name" class="form-control" required placeholder="Full name"></div>
+            <div class="col-md-4"><label>Phone</label><input type="text" name="customer_phone" class="form-control" placeholder="+880..."></div>
+            <div class="col-md-6"><label>Item *</label><select name="item_id" class="form-select" required><option value="">Select item...</option>{% for item in items %}<option value="{{ item.id }}">{{ item.item_name }} (Stock: {{ '{:,.3f}'.format(item.current_stock_qty) }} {{ item.unit }})</option>{% endfor %}</select></div>
+            <div class="col-md-6"><label>Payment Mode</label><select name="payment_mode" class="form-select"><option value="cash">Cash</option><option value="bank">Bank</option><option value="credit">Credit</option></select></div>
+            <div class="col-md-4"><label>Quantity *</label><input type="number" step="0.001" name="quantity" id="quantity" class="form-control" required placeholder="0.000" min="0.001"></div>
+            <div class="col-md-4"><label>Rate/Unit (৳) *</label><input type="number" step="0.01" name="rate_per_unit" id="rate_per_unit" class="form-control" required placeholder="0.00"></div>
+            <div class="col-md-4"><label>Making Charge (৳)</label><input type="number" step="0.01" name="making_charge" id="making_charge" class="form-control" value="0" placeholder="0.00"></div>
+            <div class="col-md-6">
+              <label>Total Amount (৳)</label>
+              <input type="number" step="0.01" name="total_amount" id="total_amount" class="form-control" readonly style="background:#fff8dc;font-weight:700;color:var(--navy);font-size:1.1rem;">
+            </div>
+            <div class="col-md-6">
+              <label>Amount Paid (৳)</label>
+              <input type="number" step="0.01" name="paid_amount" id="paid_amount" class="form-control" value="0" placeholder="0.00">
+            </div>
+            <div class="col-12">
+              <div style="background:linear-gradient(135deg,#fff8dc,#fffdf0);border:2px solid var(--gold);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:1rem;">
+                <div style="font-size:0.85rem;color:#6c757d;">Balance Due:</div>
+                <div id="balance_due" style="font-size:1.5rem;font-weight:800;color:var(--red);">৳0.00</div>
+              </div>
+              <input type="hidden" name="balance_due" id="balance_due_hidden" value="0">
+            </div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-save"></i> Record Sale</button>
+            <a href="{{ url_for('sales.list_sales') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+// Override balance_due display
+function calcTotal() {
+  const qty = parseFloat(document.getElementById('quantity')?.value || 0);
+  const rate = parseFloat(document.getElementById('rate_per_unit')?.value || 0);
+  const making = parseFloat(document.getElementById('making_charge')?.value || 0);
+  const total = (qty * rate) + making;
+  document.getElementById('total_amount').value = total.toFixed(2);
+  const paid = parseFloat(document.getElementById('paid_amount')?.value || 0);
+  const balance = Math.max(0, total - paid);
+  document.getElementById('balance_due').textContent = '৳' + balance.toLocaleString('en-IN', {minimumFractionDigits:2});
+  document.getElementById('balance_due_hidden').value = balance.toFixed(2);
+}
+['quantity','rate_per_unit','making_charge','paid_amount'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', calcTotal);
+});
+</script>
+{% endblock %}

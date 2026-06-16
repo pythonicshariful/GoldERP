@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Interest Income Report{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-percent me-2"></i>Interest Income Report</h2></div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card-gold mb-3">
+      <div class="card-body">
+        <form method="GET" class="form-gold row g-2 align-items-end">
+          <div class="col-md-6"><label>Year</label><input type="number" name="year" class="form-control" value="{{ year }}" min="2020"></div>
+          <div class="col-md-6"><button type="submit" class="btn-gold w-100"><i class="bi bi-funnel"></i> Filter</button></div>
+        </form>
+      </div>
+    </div>
+    <div class="card-gold">
+      <div class="card-header"><h5>Interest Received in {{ year }}</h5><span class="badge badge-gold">Total: ৳{{ '{:,.2f}'.format(total) }}</span></div>
+      <div class="card-body p-0">
+        <table class="table-gold w-100">
+          <thead><tr><th>Month</th><th class="text-end">Interest (৳)</th></tr></thead>
+          <tbody>
+            {% for month, amount in monthly.items() %}
+            <tr><td>{{ month }}</td><td class="text-end fw-700 amount-positive">৳{{ '{:,.2f}'.format(amount) }}</td></tr>
+            {% else %}
+            <tr><td colspan="2" class="text-center py-4 text-muted">No interest received this year.</td></tr>
+            {% endfor %}
+          </tbody>
+          <tfoot><tr><td><strong>TOTAL</strong></td><td class="text-end"><strong>৳{{ '{:,.2f}'.format(total) }}</strong></td></tr></tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

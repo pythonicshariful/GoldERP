@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Stock Position{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-box-seam me-2"></i>Stock Position Report</h2></div>
+  <a href="{{ url_for('reports.export_excel') }}?type=stock" class="btn-outline-gold"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+</div>
+
+<div class="card-gold mb-3">
+  <div class="card-body">
+    <form method="GET" class="form-gold row g-2 align-items-end">
+      <div class="col-md-4"><label>Category</label><select name="category" class="form-select"><option value="">All Categories</option><option value="finished" {% if category=='finished' %}selected{% endif %}>Finished</option><option value="raw" {% if category=='raw' %}selected{% endif %}>Raw Gold</option></select></div>
+      <div class="col-md-4"><button type="submit" class="btn-gold"><i class="bi bi-funnel"></i> Filter</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="card-gold">
+  <div class="card-header"><h5>Current Stock</h5><span class="badge badge-gold">Total Value: ৳{{ '{:,.2f}'.format(total_value) }}</span></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>Code</th><th>Item Name</th><th>Category</th><th>Unit</th><th class="text-end">Stock Qty</th><th class="text-end">Stock Value (৳)</th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td><span class="badge badge-navy">{{ item.item_code }}</span></td>
+            <td><strong>{{ item.item_name }}</strong></td>
+            <td>{{ item.category | title }}</td>
+            <td>{{ item.unit }}</td>
+            <td class="text-end">{{ '{:,.3f}'.format(item.current_stock_qty) }}</td>
+            <td class="text-end fw-700 text-gold">৳{{ '{:,.2f}'.format(item.current_stock_value) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center py-4 text-muted">No stock found.</td></tr>
+          {% endfor %}
+        </tbody>
+        <tfoot><tr><td colspan="4"><strong>TOTAL</strong></td><td></td><td class="text-end"><strong>৳{{ '{:,.2f}'.format(total_value) }}</strong></td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Receive Payment — {{ sale.invoice_no }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-cash-coin me-2"></i>Receive Payment</h2></div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <!-- Sale Summary -->
+    <div class="card-gold mb-3">
+      <div class="card-header"><h5>Invoice: {{ sale.invoice_no }}</h5></div>
+      <div class="card-body">
+        <div class="row g-2">
+          <div class="col-6"><div class="kpi-label">Customer</div><div class="fw-700">{{ sale.customer_name }}</div></div>
+          <div class="col-6"><div class="kpi-label">Sale Date</div><div class="fw-700">{{ sale.sale_date.strftime('%d %b %Y') }}</div></div>
+          <div class="col-4"><div class="kpi-label">Total Bill</div><div class="fw-700 text-navy">৳{{ '{:,.2f}'.format(sale.total_amount) }}</div></div>
+          <div class="col-4"><div class="kpi-label">Paid So Far</div><div class="fw-700 amount-positive">৳{{ '{:,.2f}'.format(sale.paid_amount) }}</div></div>
+          <div class="col-4"><div class="kpi-label">Balance Due</div><div class="fw-700 amount-negative">৳{{ '{:,.2f}'.format(sale.balance_due) }}</div></div>
+        </div>
+      </div>
+    </div>
+    <!-- Payment Form -->
+    <div class="card-gold">
+      <div class="card-header"><h5>Record Payment</h5></div>
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6"><label>Payment Date</label><input type="date" name="payment_date" class="form-control" value="{{ today.isoformat() }}" required></div>
+            <div class="col-md-6"><label>Mode</label><select name="payment_mode" class="form-select"><option value="cash">Cash</option><option value="bank">Bank</option></select></div>
+            <div class="col-md-6"><label>Amount Received (৳) *</label><input type="number" step="0.01" name="amount" class="form-control" required max="{{ sale.balance_due }}" placeholder="0.00"></div>
+            <div class="col-md-6"><label>Remarks</label><input type="text" name="remarks" class="form-control" placeholder="Optional note"></div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-check-circle"></i> Confirm Payment</button>
+            <a href="{{ url_for('sales.ar_list') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Record Interest — {{ mortgage.customer_name }}{% endblock %}
+{% block content %}
+<div class="page-header"><div><h2><i class="bi bi-percent me-2"></i>Record Interest Payment</h2></div></div>
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card-gold mb-3">
+      <div class="card-header"><h5>Mortgage Details</h5></div>
+      <div class="card-body">
+        <div class="row g-2">
+          <div class="col-6"><div class="kpi-label">Customer</div><div class="fw-700">{{ mortgage.customer_name }}</div></div>
+          <div class="col-6"><div class="kpi-label">Loan Amount</div><div class="fw-700 text-gold">৳{{ '{:,.2f}'.format(mortgage.loan_amount) }}</div></div>
+          <div class="col-6"><div class="kpi-label">Interest Rate</div><div class="fw-700">{{ mortgage.interest_rate }}% / month</div></div>
+          <div class="col-6"><div class="kpi-label">Monthly Interest</div><div class="fw-700 amount-positive">৳{{ '{:,.2f}'.format(mortgage.monthly_interest) }}</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-gold">
+      <div class="card-header"><h5>Interest Collection</h5></div>
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label>Interest Month *</label>
+              <input type="month" name="interest_month" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+              <label>Interest Amount (৳) *</label>
+              <input type="number" step="0.01" name="interest_amount" class="form-control" required value="{{ '{:.2f}'.format(mortgage.monthly_interest) }}">
+            </div>
+            <div class="col-md-6">
+              <label>Received Date *</label>
+              <input type="date" name="received_date" class="form-control" required value="{{ today.isoformat() }}">
+            </div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-check-circle"></i> Record Receipt</button>
+            <a href="{{ url_for('mortgage.register') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

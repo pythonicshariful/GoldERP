@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Invoice {{ sale.invoice_no }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('sales.invoice_pdf', id=sale.id) }}" class="btn-gold"><i class="bi bi-download"></i> Download PDF</a>
+    <button onclick="window.print()" class="btn-navy"><i class="bi bi-printer"></i> Print</button>
+    <a href="{{ url_for('sales.list_sales') }}" class="btn-outline-gold"><i class="bi bi-arrow-left"></i> Back</a>
+  </div>
+</div>
+
+<div class="invoice-box">
+  <div class="invoice-gold-stripe"></div>
+  <div class="invoice-header">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+      <div>
+        <div style="font-size:2rem;">💰</div>
+        <h2 style="color:white;margin:0;font-size:1.8rem;">{{ showroom.showroom_name if showroom else 'Gold Showroom' }}</h2>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.875rem;">{{ showroom.address if showroom else '' }}</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.875rem;">{{ showroom.phone if showroom else '' }}</div>
+      </div>
+      <div class="text-end">
+        <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1px;">Invoice</div>
+        <div style="font-size:1.8rem;font-weight:800;color:#D4A017;">{{ sale.invoice_no }}</div>
+        <div style="color:rgba(255,255,255,0.7);">{{ sale.sale_date.strftime('%d %B %Y') }}</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:2rem;">
+    <!-- Bill To -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div style="font-size:0.8rem;text-transform:uppercase;letter-spacing:1px;color:#6c757d;margin-bottom:0.5rem;">Bill To</div>
+        <div style="font-size:1.1rem;font-weight:700;color:var(--navy);">{{ sale.customer_name }}</div>
+        <div style="color:#6c757d;">{{ sale.customer_phone or '' }}</div>
+      </div>
+    </div>
+
+    <!-- Line Items -->
+    <table class="table-gold w-100 mb-4">
+      <thead>
+        <tr><th>Description</th><th class="text-end">Qty</th><th class="text-end">Rate/Unit</th><th class="text-end">Amount (৳)</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>{{ sale.item.item_name }}</strong></td>
+          <td class="text-end">{{ '{:,.3f}'.format(sale.quantity) }} {{ sale.item.unit }}</td>
+          <td class="text-end">৳{{ '{:,.2f}'.format(sale.rate_per_unit) }}</td>
+          <td class="text-end">৳{{ '{:,.2f}'.format(sale.quantity * sale.rate_per_unit) }}</td>
+        </tr>
+        {% if sale.making_charge > 0 %}
+        <tr>
+          <td>Making / Service Charge</td>
+          <td></td><td></td>
+          <td class="text-end">৳{{ '{:,.2f}'.format(sale.making_charge) }}</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+
+    <!-- Totals -->
+    <div class="row justify-content-end">
+      <div class="col-md-5">
+        <table style="width:100%;">
+          <tr><td>Subtotal</td><td class="text-end">৳{{ '{:,.2f}'.format(sale.total_amount) }}</td></tr>
+          <tr><td>Amount Paid</td><td class="text-end amount-positive">৳{{ '{:,.2f}'.format(sale.paid_amount) }}</td></tr>
+          <tr style="border-top:2px solid var(--gold);font-size:1.1rem;">
+            <td><strong>Balance Due</strong></td>
+            <td class="text-end"><strong class="{{ 'amount-negative' if sale.balance_due > 0 else 'amount-positive' }}">৳{{ '{:,.2f}'.format(sale.balance_due) }}</strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <hr class="gold-divider">
+    <div style="text-align:center;color:#6c757d;font-size:0.8rem;">
+      Thank you for your business! 💛
+    </div>
+  </div>
+  <div class="invoice-gold-stripe"></div>
+</div>
+{% endblock %}

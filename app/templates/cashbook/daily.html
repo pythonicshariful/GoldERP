@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Daily Cashbook{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-journal-text me-2"></i>Daily Cashbook</h2></div>
+  <div class="d-flex gap-2">
+    {% if current_user.can_manual_cashbook %}
+    <a href="{{ url_for('cashbook.manual_entry') }}" class="btn-gold"><i class="bi bi-pencil-square"></i> Manual Entry</a>
+    {% endif %}
+    <button onclick="window.print()" class="btn-outline-gold"><i class="bi bi-printer"></i> Print</button>
+  </div>
+</div>
+
+<!-- Date Filter -->
+<div class="card-gold mb-3">
+  <div class="card-body">
+    <form method="GET" class="form-gold row g-2 align-items-end">
+      <div class="col-md-4"><label>Date</label><input type="date" name="date" class="form-control" value="{{ filter_date }}"></div>
+      <div class="col-md-4"><button type="submit" class="btn-gold"><i class="bi bi-calendar"></i> View</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- Balance Summary Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="kpi-card">
+      <div class="kpi-icon navy"><i class="bi bi-play-fill"></i></div>
+      <div class="kpi-label">Opening Balance</div>
+      <div class="kpi-value" style="font-size:1.5rem;">৳{{ '{:,.2f}'.format(opening_balance) }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="kpi-card">
+      <div class="kpi-icon green"><i class="bi bi-arrow-down-circle-fill"></i></div>
+      <div class="kpi-label">Total Cash In</div>
+      <div class="kpi-value amount-positive" style="font-size:1.5rem;">৳{{ '{:,.2f}'.format(total_in) }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="kpi-card">
+      <div class="kpi-icon red"><i class="bi bi-arrow-up-circle-fill"></i></div>
+      <div class="kpi-label">Total Cash Out</div>
+      <div class="kpi-value amount-negative" style="font-size:1.5rem;">৳{{ '{:,.2f}'.format(total_out) }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Closing Balance Banner -->
+<div style="background:linear-gradient(135deg,var(--navy),#2a4a85);border-radius:var(--radius);padding:1.25rem 1.75rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;border-left:5px solid var(--gold);">
+  <span style="color:rgba(255,255,255,0.8);font-weight:600;">Closing Balance for {{ filter_date }}:</span>
+  <span style="font-size:2rem;font-weight:800;color:#D4A017;">৳{{ '{:,.2f}'.format(closing_balance) }}</span>
+</div>
+
+<!-- Cashbook Table -->
+<div class="card-gold">
+  <div class="card-header"><h5>Transactions</h5></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Particulars</th><th>Ref</th><th class="text-end">Cash In (৳)</th><th class="text-end">Cash Out (৳)</th><th class="text-end">Balance (৳)</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(31,56,100,0.05);">
+            <td>—</td>
+            <td><strong>Opening Balance B/F</strong></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="text-end fw-700">৳{{ '{:,.2f}'.format(opening_balance) }}</td>
+          </tr>
+          {% for entry in entries %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ entry.particulars }}{% if entry.is_manual %} <span class="badge badge-navy" style="font-size:0.7rem;">Manual</span>{% endif %}</td>
+            <td><span class="badge badge-gold" style="font-size:0.7rem;">{{ entry.ref_type or 'N/A' }}</span></td>
+            <td class="text-end txn-receipt">{% if entry.txn_type == 'receipt' %}৳{{ '{:,.2f}'.format(entry.amount) }}{% endif %}</td>
+            <td class="text-end txn-payment">{% if entry.txn_type == 'payment' %}৳{{ '{:,.2f}'.format(entry.amount) }}{% endif %}</td>
+            <td class="text-end fw-700">৳{{ '{:,.2f}'.format(entry.running_balance) }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-center py-4 text-muted">No transactions on this date.</td></tr>
+          {% endfor %}
+        </tbody>
+        {% if entries %}
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>DAY TOTALS</strong></td>
+            <td class="text-end txn-receipt"><strong>৳{{ '{:,.2f}'.format(total_in) }}</strong></td>
+            <td class="text-end txn-payment"><strong>৳{{ '{:,.2f}'.format(total_out) }}</strong></td>
+            <td class="text-end"><strong>৳{{ '{:,.2f}'.format(closing_balance) }}</strong></td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

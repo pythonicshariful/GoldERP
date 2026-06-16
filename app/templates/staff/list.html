@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Staff List{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-people me-2"></i>Staff Management</h2></div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('staff.add_staff') }}" class="btn-gold"><i class="bi bi-person-plus"></i> Add Staff</a>
+    <a href="{{ url_for('staff.add_salary_transaction') }}" class="btn-navy"><i class="bi bi-currency-dollar"></i> Salary Entry</a>
+    <a href="{{ url_for('staff.salary_summary') }}" class="btn-outline-gold"><i class="bi bi-file-earmark-bar-graph"></i> Summary</a>
+  </div>
+</div>
+<div class="card-gold">
+  <div class="card-header"><h5>Staff Members</h5></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Name</th><th>Designation</th><th>Join Date</th><th class="text-end">Basic Salary (৳)</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for member in staff %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong>{{ member.staff_name }}</strong></td>
+            <td>{{ member.designation or '—' }}</td>
+            <td>{{ member.join_date.strftime('%d %b %Y') }}</td>
+            <td class="text-end">৳{{ '{:,.2f}'.format(member.basic_salary) }}</td>
+            <td><span class="status-{{ 'active' if member.is_active else 'defaulted' }}">{{ 'Active' if member.is_active else 'Inactive' }}</span></td>
+            <td><a href="{{ url_for('staff.edit_staff', id=member.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="text-center py-4 text-muted">No staff added yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

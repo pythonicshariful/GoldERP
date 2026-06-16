@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Purchase History{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-receipt me-2"></i>Gold Purchases</h2></div>
+  <a href="{{ url_for('inventory.add_purchase') }}" class="btn-gold"><i class="bi bi-plus-circle"></i> New Purchase</a>
+</div>
+
+<!-- Filter -->
+<div class="card-gold mb-3">
+  <div class="card-body">
+    <form method="GET" class="form-gold row g-2 align-items-end">
+      <div class="col-md-3"><label>From</label><input type="date" name="start_date" class="form-control" value="{{ start_date }}"></div>
+      <div class="col-md-3"><label>To</label><input type="date" name="end_date" class="form-control" value="{{ end_date }}"></div>
+      <div class="col-md-3"><label>Item</label><select name="item_id" class="form-select"><option value="">All Items</option>{% for item in items %}<option value="{{ item.id }}" {% if item_id|string == item.id|string %}selected{% endif %}>{{ item.item_name }}</option>{% endfor %}</select></div>
+      <div class="col-md-3"><button type="submit" class="btn-gold w-100"><i class="bi bi-funnel"></i> Filter</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="card-gold">
+  <div class="card-header"><h5>Purchase List</h5><span class="badge badge-gold">Total: ৳{{ '{:,.2f}'.format(total) }}</span></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Date</th><th>Type</th><th>Item</th><th>Supplier</th><th class="text-end">Qty</th><th class="text-end">Rate/Unit</th><th class="text-end">Total (৳)</th><th>Payment</th></tr></thead>
+        <tbody>
+          {% for p in purchases %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ p.purchase_date.strftime('%d %b %Y') }}</td>
+            <td><span class="status-{{ 'active' if p.purchase_type=='finished' else 'pending' }}">{{ p.purchase_type | title }}</span></td>
+            <td>{{ p.item.item_name }}</td>
+            <td>{{ p.supplier_name }}</td>
+            <td class="text-end">{{ '{:,.3f}'.format(p.quantity) }} {{ p.item.unit }}</td>
+            <td class="text-end">৳{{ '{:,.2f}'.format(p.rate_per_unit) }}</td>
+            <td class="text-end fw-700">৳{{ '{:,.2f}'.format(p.total_amount) }}</td>
+            <td><span class="badge {{ 'badge-gold' if p.payment_mode=='cash' else 'badge-navy' }}">{{ p.payment_mode | title }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="9" class="text-center py-4 text-muted">No purchases found.</td></tr>
+          {% endfor %}
+        </tbody>
+        {% if purchases %}
+        <tfoot><tr><td colspan="7"><strong>TOTAL</strong></td><td class="text-end"><strong>৳{{ '{:,.2f}'.format(total) }}</strong></td><td></td></tr></tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

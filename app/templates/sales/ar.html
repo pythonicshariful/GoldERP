@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Accounts Receivable{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-people me-2"></i>Accounts Receivable</h2></div>
+  <a href="{{ url_for('sales.ar_aging') }}" class="btn-outline-gold"><i class="bi bi-clock-history"></i> AR Aging</a>
+</div>
+<div class="card-gold">
+  <div class="card-header">
+    <h5>Outstanding Balances</h5>
+    <span class="badge" style="background:var(--red);font-size:0.9rem;">Total: ৳{{ '{:,.2f}'.format(total_ar) }}</span>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Invoice</th><th>Customer</th><th>Phone</th><th>Sale Date</th><th class="text-end">Total (৳)</th><th class="text-end">Balance (৳)</th><th>Days Old</th><th>Action</th></tr></thead>
+        <tbody>
+          {% for s in sales %}
+          {% set days = (today.date() if today is defined else (s.sale_date.__class__.today())) %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><a href="{{ url_for('sales.invoice', id=s.id) }}" class="text-gold fw-700">{{ s.invoice_no }}</a></td>
+            <td><strong>{{ s.customer_name }}</strong></td>
+            <td>{{ s.customer_phone or '—' }}</td>
+            <td>{{ s.sale_date.strftime('%d %b %Y') }}</td>
+            <td class="text-end">৳{{ '{:,.2f}'.format(s.total_amount) }}</td>
+            <td class="text-end fw-700 amount-negative">৳{{ '{:,.2f}'.format(s.balance_due) }}</td>
+            <td>
+              {% set days_old = (namespace(val=0)) %}
+              <span class="badge {{ 'bg-success' if days_old.val <= 30 else ('bg-warning text-dark' if days_old.val <= 60 else 'bg-danger') }}">
+                {{ (s.sale_date.__class__.today() - s.sale_date).days }}d
+              </span>
+            </td>
+            <td><a href="{{ url_for('sales.receive_payment', id=s.id) }}" class="btn-gold" style="padding:0.3rem 0.75rem;font-size:0.8rem;min-height:auto;"><i class="bi bi-cash-coin"></i> Pay</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="9" class="text-center py-4 text-muted">🎉 No outstanding receivables!</td></tr>
+          {% endfor %}
+        </tbody>
+        {% if sales %}
+        <tfoot><tr><td colspan="6"><strong>TOTAL AR</strong></td><td class="text-end"><strong style="color:var(--red);">৳{{ '{:,.2f}'.format(total_ar) }}</strong></td><td colspan="2"></td></tr></tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Item Master{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-gem me-2"></i>Gold Item Master</h2></div>
+  {% if current_user.can_enter_purchases %}
+  <a href="{{ url_for('inventory.add_item') }}" class="btn-gold"><i class="bi bi-plus-circle"></i> Add Item</a>
+  {% endif %}
+</div>
+<div class="card-gold">
+  <div class="card-header"><h5><i class="bi bi-list-ul me-2"></i>All Items</h5></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Code</th><th>Item Name</th><th>Category</th><th>Unit</th><th class="text-end">Stock Qty</th><th class="text-end">Stock Value (৳)</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><span class="badge badge-navy">{{ item.item_code }}</span></td>
+            <td><strong>{{ item.item_name }}</strong></td>
+            <td><span class="status-{{ 'active' if item.category=='finished' else 'pending' }}">{{ item.category | title }}</span></td>
+            <td>{{ item.unit }}</td>
+            <td class="text-end">{{ '{:,.3f}'.format(item.current_stock_qty) }}</td>
+            <td class="text-end fw-700">৳{{ '{:,.2f}'.format(item.current_stock_value) }}</td>
+            <td>
+              {% if current_user.can_enter_purchases %}
+              <a href="{{ url_for('inventory.edit_item', id=item.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="text-center py-4 text-muted">No items yet. <a href="{{ url_for('inventory.add_item') }}">Add your first item.</a></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

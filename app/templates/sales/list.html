@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Sales List{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div><h2><i class="bi bi-bag-check me-2"></i>Gold Sales</h2></div>
+  <a href="{{ url_for('sales.add_sale') }}" class="btn-gold"><i class="bi bi-plus-circle"></i> New Sale</a>
+</div>
+<div class="card-gold mb-3">
+  <div class="card-body">
+    <form method="GET" class="form-gold row g-2 align-items-end">
+      <div class="col-md-4"><label>From</label><input type="date" name="start_date" class="form-control" value="{{ start_date }}"></div>
+      <div class="col-md-4"><label>To</label><input type="date" name="end_date" class="form-control" value="{{ end_date }}"></div>
+      <div class="col-md-4"><button type="submit" class="btn-gold w-100"><i class="bi bi-funnel"></i> Filter</button></div>
+    </form>
+  </div>
+</div>
+<div class="card-gold">
+  <div class="card-header"><h5>Sales Records</h5><span class="badge badge-gold">Total: ৳{{ '{:,.2f}'.format(total) }}</span></div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table-gold w-100">
+        <thead><tr><th>#</th><th>Date</th><th>Invoice</th><th>Customer</th><th>Item</th><th class="text-end">Total (৳)</th><th class="text-end">Paid (৳)</th><th class="text-end">Balance (৳)</th><th>Mode</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for s in sales %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ s.sale_date.strftime('%d %b %Y') }}</td>
+            <td><a href="{{ url_for('sales.invoice', id=s.id) }}" class="text-gold fw-700">{{ s.invoice_no }}</a></td>
+            <td>{{ s.customer_name }}</td>
+            <td>{{ s.item.item_name }}</td>
+            <td class="text-end fw-700">৳{{ '{:,.2f}'.format(s.total_amount) }}</td>
+            <td class="text-end amount-positive">৳{{ '{:,.2f}'.format(s.paid_amount) }}</td>
+            <td class="text-end {{ 'amount-negative' if s.balance_due > 0 else '' }}">৳{{ '{:,.2f}'.format(s.balance_due) }}</td>
+            <td><span class="badge {{ 'badge-gold' if s.payment_mode=='cash' else 'badge-navy' }}">{{ s.payment_mode | title }}</span></td>
+            <td>
+              <a href="{{ url_for('sales.invoice', id=s.id) }}" class="btn btn-sm btn-outline-secondary" title="View Invoice"><i class="bi bi-eye"></i></a>
+              {% if s.balance_due > 0 %}
+              <a href="{{ url_for('sales.receive_payment', id=s.id) }}" class="btn btn-sm btn-outline-success" title="Receive Payment"><i class="bi bi-cash-coin"></i></a>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="10" class="text-center py-4 text-muted">No sales found.</td></tr>
+          {% endfor %}
+        </tbody>
+        {% if sales %}
+        <tfoot><tr><td colspan="5"><strong>TOTAL</strong></td><td class="text-end"><strong>৳{{ '{:,.2f}'.format(total) }}</strong></td><td colspan="4"></td></tr></tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

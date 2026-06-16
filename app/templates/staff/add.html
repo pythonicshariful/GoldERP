@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Add Staff{% endblock %}
+{% block content %}
+<div class="page-header"><div><h2><i class="bi bi-person-plus me-2"></i>Add Staff Member</h2></div></div>
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card-gold">
+      <div class="card-body">
+        <form method="POST" class="form-gold needs-validation" novalidate>
+          <div class="row g-3">
+            <div class="col-12"><label>Full Name *</label><input type="text" name="staff_name" class="form-control" required placeholder="Staff full name"></div>
+            <div class="col-md-6"><label>Designation</label><input type="text" name="designation" class="form-control" placeholder="e.g. Salesperson, Goldsmith"></div>
+            <div class="col-md-6"><label>Join Date *</label><input type="date" name="join_date" class="form-control" required value="{{ today.isoformat() }}"></div>
+            <div class="col-md-6"><label>Basic Salary (৳/month) *</label><input type="number" step="0.01" name="basic_salary" class="form-control" required placeholder="0.00"></div>
+          </div>
+          <hr class="gold-divider">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn-gold"><i class="bi bi-save"></i> Add Staff</button>
+            <a href="{{ url_for('staff.list_staff') }}" class="btn-outline-gold"><i class="bi bi-x-circle"></i> Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

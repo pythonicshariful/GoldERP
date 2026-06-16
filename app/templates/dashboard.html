@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Page Title -->
+<div class="page-header">
+  <div>
+    <h1><i class="bi bi-speedometer2 me-2" style="color:#D4A017;"></i>Dashboard</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item active" style="color:rgba(255,255,255,0.7);">
+          {{ today.strftime('%A, %d %B %Y') }}
+          {% if showroom %} — {{ showroom.showroom_name }}{% endif %}
+        </li>
+      </ol>
+    </nav>
+  </div>
+  <div class="no-print">
+    <a href="{{ url_for('cashbook.daily') }}" class="btn-outline-gold" style="border-color:rgba(212,160,23,0.5);color:#D4A017;">
+      <i class="bi bi-journal-text"></i> Today's Cashbook
+    </a>
+  </div>
+</div>
+
+<!-- ── Quick Actions ──────────────────────────────────────────────────── -->
+<div class="quick-actions mb-4 no-print">
+  <a href="{{ url_for('sales.add_sale') }}" class="btn-gold">
+    <i class="bi bi-plus-circle-fill"></i> New Sale
+  </a>
+  <a href="{{ url_for('expenses.add_expense') }}" class="btn-navy">
+    <i class="bi bi-plus-circle-fill"></i> Add Expense
+  </a>
+  {% if current_user.can_enter_purchases %}
+  <a href="{{ url_for('inventory.add_purchase') }}" class="btn-outline-gold">
+    <i class="bi bi-plus-circle-fill"></i> New Purchase
+  </a>
+  {% endif %}
+  <a href="{{ url_for('mortgage.add_mortgage') }}" class="btn-outline-gold">
+    <i class="bi bi-plus-circle-fill"></i> New Mortgage
+  </a>
+</div>
+
+<!-- ── KPI Cards ──────────────────────────────────────────────────────── -->
+<div class="row g-3 mb-4">
+  <!-- Cash Balance -->
+  <div class="col-6 col-lg-2">
+    <div class="kpi-card">
+      <div class="kpi-icon gold"><i class="bi bi-cash-coin"></i></div>
+      <div class="kpi-label">Cash Balance</div>
+      <div class="kpi-value kpi-animate" data-value="{{ cash_balance }}">৳0</div>
+      <div class="kpi-sub"><a href="{{ url_for('cashbook.daily') }}" class="text-gold">View Cashbook</a></div>
+    </div>
+  </div>
+
+  <!-- Bank Balance -->
+  <div class="col-6 col-lg-2">
+    <div class="kpi-card">
+      <div class="kpi-icon navy"><i class="bi bi-bank"></i></div>
+      <div class="kpi-label">Bank Balance</div>
+      <div class="kpi-value kpi-animate" data-value="{{ bank_balance }}">৳0</div>
+      <div class="kpi-sub">Total in Bank</div>
+    </div>
+  </div>
+
+  <!-- Today Sales -->
+  <div class="col-6 col-lg-2">
+    <div class="kpi-card">
+      <div class="kpi-icon green"><i class="bi bi-bag-check-fill"></i></div>
+      <div class="kpi-label">Today's Sales</div>
+      <div class="kpi-value kpi-animate" data-value="{{ today_sales }}">৳0</div>
+      <div class="kpi-sub">{{ today.strftime('%d %b') }}</div>
+    </div>
+  </div>
+
+  <!-- AR Outstanding -->
+  <div class="col-6 col-lg-2">
+    <div class="kpi-card">
+      <div class="kpi-icon amber"><i class="bi bi-people-fill"></i></div>
+      <div class="kpi-label">AR Outstanding</div>
+      <div class="kpi-value kpi-animate" data-value="{{ ar_outstanding }}">৳0</div>
+      <div class="kpi-sub"><a href="{{ url_for('sales.ar_list') }}" class="text-gold">View AR →</a></div>
+    </div>
+  </div>
+
+  <!-- Active Mortgages -->
+  <div class="col-6 col-lg-2">
+    <div class="kpi-card">
+      <div class="kpi-icon navy"><i class="bi bi-bank2"></i></div>
+      <div class="kpi-label">Active Mortgages</div>
+      <div class="kpi-value" style="font-size:2.2rem;">{{ active_mortgages }}</div>
+      <div class="kpi-sub">Loan: ৳{{ '{:,.0f}'.format(total_loan_outstanding) }}</div>
+    </div>
+  </div>
+
+  <!-- Stock Value -->
+  <div class="col-6 col-lg-2">
+    <div class="kpi-card" style="background:linear-gradient(135deg,#1F3864,#2a4a85);">
+      <div style="color:rgba(255,255,255,0.7);font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:0.5rem;">Stock Value</div>
+      <div style="font-size:1.8rem;font-weight:800;color:#D4A017;font-family:'Inter',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="৳ {{ '{:,.2f}'.format(total_stock_value) }}">
+        ৳ {{ '{:,.0f}'.format(total_stock_value) }}
+      </div>
+      <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;margin-top:0.35rem;">
+        <a href="{{ url_for('inventory.stock_report') }}" style="color:#D4A017;">View stock →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Chart Row ──────────────────────────────────────────────────────── -->
+<div class="row g-3">
+  <!-- Sales Chart -->
+  <div class="col-12 col-lg-8">
+    <div class="chart-container">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="mb-0" style="font-size:1rem;font-weight:700;color:var(--navy);">
+          <i class="bi bi-bar-chart-fill text-gold me-2"></i>Last 7 Days Sales
+        </h5>
+        <a href="{{ url_for('sales.list_sales') }}" class="btn-outline-gold" style="font-size:0.8rem;padding:0.35rem 0.85rem;min-height:auto;">
+          View All
+        </a>
+      </div>
+      <div style="height:240px;position:relative;">
+        <canvas id="salesChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Summary -->
+  <div class="col-12 col-lg-4">
+    <div class="card-gold h-100">
+      <div class="card-header">
+        <h5><i class="bi bi-lightning-fill me-2" style="color:#D4A017;"></i>Quick Links</h5>
+      </div>
+      <div class="card-body p-0">
+        <a href="{{ url_for('sales.ar_list') }}" class="d-flex align-items-center p-3 border-bottom text-decoration-none" style="transition:background 0.2s;" onmouseover="this.style.background='#FFFDF0'" onmouseout="this.style.background=''">
+          <div class="kpi-icon amber me-3" style="width:40px;height:40px;font-size:1rem;flex-shrink:0;"><i class="bi bi-people"></i></div>
+          <div>
+            <div style="font-weight:600;color:var(--navy);font-size:0.9rem;">Accounts Receivable</div>
+            <div style="color:#6c757d;font-size:0.8rem;">৳ {{ '{:,.2f}'.format(ar_outstanding) }} pending</div>
+          </div>
+          <i class="bi bi-chevron-right ms-auto text-gold"></i>
+        </a>
+
+        <a href="{{ url_for('mortgage.register') }}" class="d-flex align-items-center p-3 border-bottom text-decoration-none" onmouseover="this.style.background='#FFFDF0'" onmouseout="this.style.background=''">
+          <div class="kpi-icon navy me-3" style="width:40px;height:40px;font-size:1rem;flex-shrink:0;"><i class="bi bi-bank2"></i></div>
+          <div>
+            <div style="font-weight:600;color:var(--navy);font-size:0.9rem;">Mortgage Register</div>
+            <div style="color:#6c757d;font-size:0.8rem;">{{ active_mortgages }} active loans</div>
+          </div>
+          <i class="bi bi-chevron-right ms-auto text-gold"></i>
+        </a>
+
+        <a href="{{ url_for('cashbook.daily') }}" class="d-flex align-items-center p-3 border-bottom text-decoration-none" onmouseover="this.style.background='#FFFDF0'" onmouseout="this.style.background=''">
+          <div class="kpi-icon gold me-3" style="width:40px;height:40px;font-size:1rem;flex-shrink:0;"><i class="bi bi-journal-text"></i></div>
+          <div>
+            <div style="font-weight:600;color:var(--navy);font-size:0.9rem;">Daily Cashbook</div>
+            <div style="color:#6c757d;font-size:0.8rem;">Balance: ৳ {{ '{:,.2f}'.format(cash_balance) }}</div>
+          </div>
+          <i class="bi bi-chevron-right ms-auto text-gold"></i>
+        </a>
+
+        {% if current_user.can_view_reports %}
+        <a href="{{ url_for('reports.pnl') }}" class="d-flex align-items-center p-3 text-decoration-none" onmouseover="this.style.background='#FFFDF0'" onmouseout="this.style.background=''">
+          <div class="kpi-icon green me-3" style="width:40px;height:40px;font-size:1rem;flex-shrink:0;"><i class="bi bi-graph-up"></i></div>
+          <div>
+            <div style="font-weight:600;color:var(--navy);font-size:0.9rem;">P&L Statement</div>
+            <div style="color:#6c757d;font-size:0.8rem;">Financial reports</div>
+          </div>
+          <i class="bi bi-chevron-right ms-auto text-gold"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Stock System View ────────────────────────────────────────────────── -->
+<div class="row g-3 mt-2 mb-5">
+  <div class="col-12">
+    <div class="card-gold">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-box-seam me-2" style="color:#D4A017;"></i>Stock System (Real-time)</h5>
+        <span class="badge badge-gold">Auto-updates on Buy/Sell</span>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-navy">
+              <tr>
+                <th>Item Code</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th class="text-center">In Stock Qty</th>
+                <th class="text-end">Stock Value (৳)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in stock_items %}
+              <tr>
+                <td><span class="badge bg-light text-dark border">{{ item.item_code }}</span></td>
+                <td class="fw-bold" style="color:var(--navy);">{{ item.item_name }}</td>
+                <td><span class="badge badge-gold">{{ item.category|title }}</span></td>
+                <td class="text-center fw-bold {% if item.current_stock_qty <= 0 %}text-danger{% else %}text-success{% endif %}">
+                  {{ '{:,.3f}'.format(item.current_stock_qty) }} {{ item.unit }}
+                </td>
+                <td class="text-end text-muted">
+                  ৳ {{ '{:,.2f}'.format(item.current_stock_value) }}
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-muted py-4">No items in stock.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  initSalesChart(
+    {{ sales_labels | tojson }},
+    {{ sales_data | tojson }}
+  );
+</script>
+{% endblock %}
