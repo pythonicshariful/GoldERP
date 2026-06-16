@@ -97,7 +97,7 @@ def pnl():
 @report_required
 def balance_sheet():
     # Assets
-    cash = db.session.query(func.coalesce(Cashbook.running_balance, 0)).order_by(Cashbook.id.desc()).scalar() or 0
+    cash = db.session.query(func.coalesce(Cashbook.running_balance, 0)).order_by(Cashbook.id.desc()).limit(1).scalar() or 0
     ar = db.session.query(func.sum(GoldSale.balance_due)).filter(GoldSale.balance_due > 0).scalar() or 0
     stock_value = db.session.query(func.sum(GoldItem.current_stock_value)).scalar() or 0
     from ..models import ShowroomSetup
